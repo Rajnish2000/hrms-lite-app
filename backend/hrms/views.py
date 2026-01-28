@@ -8,6 +8,7 @@ from .exceptions import (
     HRMSException, DatabaseException, ValidationException,
     NotFoundException, ConflictException, format_error_response
 )
+from mongoengine.connection import ConnectionFailure
 import logging
 import mongoengine as me
 
@@ -275,39 +276,28 @@ def dashboard_summary(request):
     try:
         today = today_date.today()
 
-        try:
-            total_employees = Employee.objects().count()
-            present_today = Attendance.objects(date=today, status="Present").count()
-            absent_today = Attendance.objects(date=today, status="Absent").count()
-            marked_today = Attendance.objects(date=today).count()
-            not_marked_today = max(total_employees - marked_today, 0)
-            
-            logger.info(f"Dashboard summary retrieved for {today}")
-            return Response({
-                "date": str(today),
-                "total_employees": total_employees,
-                "present_today": present_today,
-                "absent_today": absent_today,
-                "not_marked_today": not_marked_today
-            })
-        except me.ConnectionError as e:
-            logger.error(f"Database connection error: {str(e)}")
-            return error_response(
-                "Database connection error",
-                "DB_CONNECTION_ERROR",
-                status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-        except Exception as e:
-            logger.error(f"Error retrieving dashboard summary: {str(e)}")
-            return error_response(
-                "Error retrieving dashboard data",
-                "DB_ERROR",
-                status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        total_employees = Employee.objects.count()
+
+        present_today = Attendance.objects(date=today, status="Present").count()
+        absent_today = Attendance.objects(date=today, status="Absent").count()
+
+        marked_today = Attendance.objects(date=today).count()
+        not_marked_today = max(total_employees - marked_today, 0)
+
+        return Response({
+            "date": str(today),
+            "total_employees": total_employees,
+            "present_today": present_today,
+            "absent_today": absent_today,
+            "not_marked_today": not_marked_today
+        }, status=status.HTTP_200_OK)
+
+    except ConnectionFailure as e:
+        logger.error(f"MongoDB connection failure: {e}")
+        return Response({"message": "Database connection failed."},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     except Exception as e:
-        logger.error(f"Unexpected error in dashboard_summary: {str(e)}")
-        return error_response(
-            "An unexpected error occurred",
-            "INTERNAL_ERROR",
-            status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        logger.error(f"Unexpected error in dashboard_summary: {e}")
+        return Response({"message": "Internal Server Error"},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)

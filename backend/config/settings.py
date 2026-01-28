@@ -14,7 +14,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 from pathlib import Path
-from hrms.mongo import connect_mongo
 import logging.config
 
 load_dotenv()
@@ -94,7 +93,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {   
 }
 
-connect_mongo()
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
