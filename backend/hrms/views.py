@@ -85,6 +85,8 @@ def list_employees(request):
                 "full_name": e.full_name,
                 "email": e.email,
                 "department": e.department,
+                "present_count": Attendance.objects(employee=e.id, status="Present").count(),
+                "absent_count": Attendance.objects(employee=e.id, status="Absent").count()
             }
             for e in employees
         ]
@@ -237,6 +239,7 @@ def employee_attendance(request, employee_id):
             ]
 
             present_count = Attendance.objects(employee=emp, status="Present").count()
+            absent_count = Attendance.objects(employee=emp, status="Absent").count()
             
             logger.info(f"Retrieved attendance records for {employee_id}")
             return Response({
@@ -246,6 +249,7 @@ def employee_attendance(request, employee_id):
                     "department": emp.department,
                 },
                 "present_days": present_count,
+                "absent_days": absent_count,
                 "records": data
             })
         except me.ConnectionFailure as e:

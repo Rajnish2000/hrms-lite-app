@@ -22,7 +22,7 @@ export default function Employees() {
     async function fetchEmployees() {
         setLoading(true);
         try {
-            const res = await api.get("/employees/");
+            const res = await api.get("/employees/"); 
             setEmployees(res.data);
         } catch (err) {
             setError("Failed to load employees.", err);
@@ -64,8 +64,17 @@ export default function Employees() {
         }
     }
 
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredEmployees = employees.filter((emp) =>
+        emp.employee_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        emp.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        emp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        emp.department.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-6">
             <div className="max-w-6xl mx-auto">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="bg-indigo-600 p-3 rounded-lg">
@@ -110,6 +119,26 @@ export default function Employees() {
                     </div>
                 </form>
 
+                <div className="mb-6">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="🔍 Search employees by ID, name, email, or department..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full px-5 py-3 pl-12 bg-white border-2 border-indigo-300 rounded-xl focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 shadow-md transition placeholder-gray-500 text-gray-700"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm("")}
+                                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                </div>
+
                 {error && (
                     <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg shadow-md">
                         {error}
@@ -118,30 +147,34 @@ export default function Employees() {
 
                 {loading ? (
                     <Loader />
-                ) : employees.length === 0 ? (
+                ) : filteredEmployees.length === 0 ? (
                     <EmptyState title="No employees found. Add your first employee." />
                 ) : (
-                    <div className="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200">
-                        <table className="w-full text-sm">
-                            <thead className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white">
+                    <div className="bg-white shadow-lg rounded-2xl overflow-x-auto border border-gray-200">
+                        <table className="w-full text-base">
+                            <thead className="bg-linear-to-r from-indigo-600 to-indigo-700 text-white sticky top-0">
                                 <tr>
-                                    <th className="p-4 text-left font-semibold">Employee ID</th>
-                                    <th className="p-4 text-left font-semibold">Full Name</th>
-                                    <th className="p-4 text-left font-semibold">Email</th>
-                                    <th className="p-4 text-left font-semibold">Department</th>
-                                    <th className="p-4 text-left font-semibold">Action</th>
+                                    <th className="p-4 text-left font-semibold whitespace-nowrap">Employee ID</th>
+                                    <th className="p-4 text-left font-semibold whitespace-nowrap">Full Name</th>
+                                    <th className="p-4 text-left font-semibold whitespace-nowrap">Email</th>
+                                    <th className="p-4 text-left font-semibold whitespace-nowrap">Department</th>
+                                    <th className="p-4 text-left font-semibold whitespace-nowrap">Present</th>
+                                    <th className="p-4 text-left font-semibold whitespace-nowrap">Absent</th>
+                                    <th className="p-4 text-left font-semibold whitespace-nowrap">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {employees.map((emp, idx) => (
+                                {filteredEmployees.map((emp, idx) => (
                                     <tr key={emp.employee_id} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                                         <td className="p-4 font-medium text-gray-900">{emp.employee_id}</td>
                                         <td className="p-4 text-gray-700">{emp.full_name}</td>
-                                        <td className="p-4 text-gray-700">{emp.email}</td>
+                                        <td className="p-4 text-gray-700 break-all">{emp.email}</td>
                                         <td className="p-4 text-gray-700">{emp.department}</td>
+                                        <td className="p-4 text-gray-700">{emp.present_count}</td>
+                                        <td className="p-4 text-gray-700">{emp.absent_count}</td>
                                         <td className="p-4">
                                             <button
-                                                className="flex items-center gap-2 text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1 rounded-lg transition"
+                                                className="flex items-center gap-2 text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1 rounded-lg transition whitespace-nowrap"
                                                 onClick={() => deleteEmployee(emp.employee_id)}
                                             >
                                                 <Trash2 size={16} />
