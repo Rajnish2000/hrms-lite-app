@@ -1,6 +1,7 @@
 # Created by venv; see https://docs.python.org/3/library/venv.html
 # Byte-compiled files
-backend/__pycache__/
+backend/config/__pycache__/
+backend/hrms/__pycache__/
 backend/*.py[cod]
 
 # Virtual environment
