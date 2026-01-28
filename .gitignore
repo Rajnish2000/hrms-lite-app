@@ -1,0 +1,45 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+# Byte-compiled files
+backend/__pycache__/
+backend/*.py[cod]
+
+# Virtual environment
+backend/venv/
+
+# Distribution / packaging
+backend/.Python
+backend/build/
+backend/dist/
+backend/*.egg-info/
+
+# Environment variables
+backend/.env
+
+
+# now from here frontend gitignore file are availabel.
+
+# Logs
+hrms-frontend/logs
+hrms-frontend/*.log
+hrms-frontend/npm-debug.log*
+hrms-frontend/yarn-debug.log*
+hrms-frontend/yarn-error.log*
+hrms-frontend/pnpm-debug.log*
+hrms-frontend/lerna-debug.log*
+
+hrms-frontend/node_modules
+hrms-frontend/dist
+hrms-frontend/dist-ssr
+hrms-frontend/*.local
+
+# Editor directories and files
+hrms-frontend/.vscode/*
+hrms-frontend/!.vscode/extensions.json
+hrms-frontend/.idea
+hrms-frontend/.DS_Store
+hrms-frontend/*.suo
+hrms-frontend/*.ntvs*
+hrms-frontend/*.njsproj
+hrms-frontend/*.sln
+hrms-frontend/*.sw?
+hrms-frontend/.env
