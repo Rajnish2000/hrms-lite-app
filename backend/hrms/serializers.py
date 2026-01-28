@@ -35,7 +35,7 @@ class EmployeeSerializer(serializers.Serializer):
                 raise serializers.ValidationError("Employee ID already exists.")
             
             return value
-        except me.ConnectionError as e:
+        except me.ConnectionFailure as e:
             logger.error(f"Database connection error during employee_id validation: {str(e)}")
             raise serializers.ValidationError("Database error occurred. Please try again.")
         except Exception as e:
@@ -64,7 +64,7 @@ class EmployeeSerializer(serializers.Serializer):
                 raise serializers.ValidationError("Email already exists.")
             
             return value
-        except me.ConnectionError as e:
+        except me.ConnectionFailure as e:
             logger.error(f"Database connection error during email validation: {str(e)}")
             raise serializers.ValidationError("Database error occurred. Please try again.")
         except Exception as e:
@@ -176,7 +176,7 @@ class AttendanceSerializer(serializers.Serializer):
                     logger.warning(f"Employee not found during attendance validation: {employee_id}")
                     raise serializers.ValidationError({"employee_id": "Employee not found."})
                 attrs["employee"] = emp
-            except me.ConnectionError as e:
+            except me.ConnectionFailure as e:
                 logger.error(f"Database connection error during employee lookup: {str(e)}")
                 raise serializers.ValidationError("Database error occurred. Please try again.")
             

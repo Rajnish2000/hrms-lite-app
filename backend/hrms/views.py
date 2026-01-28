@@ -90,7 +90,7 @@ def list_employees(request):
         ]
         logger.info(f"Retrieved {len(data)} employees")
         return Response(data)
-    except me.ConnectionError as e:
+    except me.ConnectionFailure as e:
         logger.error(f"Database connection error: {str(e)}")
         return error_response(
             "Database connection error",
@@ -248,7 +248,7 @@ def employee_attendance(request, employee_id):
                 "present_days": present_count,
                 "records": data
             })
-        except me.ConnectionError as e:
+        except me.ConnectionFailure as e:
             logger.error(f"Database connection error: {str(e)}")
             return error_response(
                 "Database connection error",

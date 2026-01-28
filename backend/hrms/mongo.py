@@ -31,7 +31,7 @@ def connect_mongo():
         logger.error(f"Configuration error: {str(ve)}")
         raise
         
-    except me.ConnectionError as ce:
+    except me.ConnectionFailure as ce:
         error_msg = f"Failed to connect to MongoDB: {str(ce)}"
         logger.error(error_msg)
         raise ConnectionError(error_msg) from ce
