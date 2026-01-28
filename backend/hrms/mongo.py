@@ -16,6 +16,9 @@ def connect_mongo():
         ValueError: If MONGO_URI environment variable is not set
     """
     try:
+        print(os.getenv('DEBUG'))
+        print(os.getenv('MONGO_URI'))
+        print(os.getenv('SECRET_KEY'))
         mongo_uri = os.getenv("MONGO_URI")
         
         if not mongo_uri:
